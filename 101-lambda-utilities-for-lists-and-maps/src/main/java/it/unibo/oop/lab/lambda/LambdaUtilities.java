@@ -1,7 +1,10 @@
 package it.unibo.oop.lab.lambda;
 
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,10 +61,11 @@ public final class LambdaUtilities {
      *         otherwise.
      */
     public static <T> List<Optional<T>> optFilter(final List<T> list, final Predicate<T> pre) {
-        /*
-         * Suggestion: consider Optional.filter
-         */
-        return null;
+        final List<Optional<T>> l = new ArrayList<>(list.size());
+       list.forEach(t -> {
+        l.add(Optional.ofNullable(t).filter(pre));
+       });
+        return l;
     }
 
     /**
@@ -77,10 +81,17 @@ public final class LambdaUtilities {
      *         based on the mapping done by the function
      */
     public static <R, T> Map<R, Set<T>> group(final List<T> list, final Function<T, R> op) {
+        final Map<R, Set<T>> mappa = new HashMap<>();
+        list.forEach(t -> {
+            mappa.merge(op.apply(t), new HashSet<>(Collections.singleton(t)), (oldv, newv) -> {
+                oldv.addAll(newv);
+                return oldv;
+            });
+        });
         /*
          * Suggestion: consider Map.merge
          */
-        return null;
+        return mappa;
     }
 
     /**
@@ -96,12 +107,11 @@ public final class LambdaUtilities {
      *         by the supplier
      */
     public static <K, V> Map<K, V> fill(final Map<K, Optional<V>> map, final Supplier<V> def) {
-        /*
-         * Suggestion: consider Optional.orElse
-         *
-         * Keep in mind that a map can be iterated through its forEach method
-         */
-        return null;
+        final Map<K, V> mappa = new HashMap<>();
+        map.forEach((key, value) -> {
+            mappa.put(key, value.orElseGet(def));
+        });
+        return mappa;
     }
 
     /**
@@ -110,7 +120,10 @@ public final class LambdaUtilities {
      */
     @SuppressWarnings("PMD.SystemPrintln")
     public static void main(final String[] args) {
-        final List<Integer> li = IntStream.range(1, 8).mapToObj(i -> Integer.valueOf(i)).collect(Collectors.toList());
+        final List<Integer> li = IntStream
+            .range(1, 8)
+            .mapToObj(Integer::valueOf)
+            .collect(Collectors.toList());
         System.out.println(dup(li, x -> x + 100));
         /*
          * [1, 101, 2, 102, 3, 103, 4, 104, 5, 105, 6, 106, 7, 107]

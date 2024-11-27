@@ -57,7 +57,6 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
          * should be paid to alive threads, as the application would continue to persist
          * until the last thread terminates.
          */
-        System.exit(0);
     }
 
     /**
@@ -66,7 +65,9 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
      * @throws FileNotFoundException 
      */
     public static void main(final String... args) throws FileNotFoundException {
-        new DrawNumberApp(new DrawNumberViewImpl());
+        new DrawNumberApp(new DrawNumberViewImpl(),
+        new DrawNumberViewImpl(),
+        new PrintStreamView(System.out),
+        new PrintStreamView("output.log"));
     }
-
 }
